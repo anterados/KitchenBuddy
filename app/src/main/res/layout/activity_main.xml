@@ -16,8 +16,8 @@
         android:layout_marginEnd="24dp"
         android:background="@android:color/background_light"
         android:ems="10"
+        android:hint="Username"
         android:inputType="textPersonName"
-        android:text="Name"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -60,7 +60,7 @@
         app:layout_constraintTop_toBottomOf="@+id/password_edittext_register" />
 
     <TextView
-        android:id="@+id/already_registered_text_view"
+        android:id="@+id/already_registered_textview_register"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"

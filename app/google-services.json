@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "895314863657",
+    "firebase_url": "https://kitchenbuddy-6a457.firebaseio.com",
+    "project_id": "kitchenbuddy-6a457",
+    "storage_bucket": "kitchenbuddy-6a457.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:895314863657:android:764063b1ece164eb399e38",
+        "android_client_info": {
+          "package_name": "com.example.kitchenbuddy"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "895314863657-t5jvkgl75uuhj0cc36fmrcd2oaocn4oh.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD5IUdjz4Mr_bHoA4LMe3eA2RJ3egMoRWM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "895314863657-t5jvkgl75uuhj0cc36fmrcd2oaocn4oh.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
