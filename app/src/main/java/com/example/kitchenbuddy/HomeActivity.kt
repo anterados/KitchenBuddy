@@ -1,31 +1,44 @@
 package com.example.kitchenbuddy
 
-import android.graphics.Color
+import android.app.SearchManager
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.SearchView
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import kotlinx.android.synthetic.main.activity_home.*
 import okhttp3.*
-import okio.GzipSource
 import java.io.IOException
 
-class HomeActivity : AppCompatActivity(){
+
+class HomeActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
 
+
         //recyclerView_home.setBackgroundColor(Color.BLUE)
         recyclerView_home.layoutManager=LinearLayoutManager(this)
         //recyclerView_home.adapter=HomeAdapter()
+        //val intent = intent
+/*
+        if (Intent.ACTION_SEARCH == intent.action) {
+            intent.getStringExtra(SearchManager.QUERY)?.also { query ->
+                doMySearch(query)
+            }
 
+ */
+        //handleIntent(getIntent())
         fetchJson()
     }
     fun fetchJson(){
         println("Attempting to fetch JSON")
-        val url = "http://www.recipepuppy.com/api/"
+        //val url = "http://www.recipepuppy.com/api/"
+        val url = "https://www.themealdb.com/api/json/v2/9973533/filter.php?i=garlic"
         val request = Request.Builder().url(url).build()
         val client = OkHttpClient()
 
@@ -46,7 +59,49 @@ class HomeActivity : AppCompatActivity(){
             }
         })
     }
+
+    fun searching(search : SearchView){
+        search.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                Log.i("HomeActivity","Llego al querysubmit")
+                return false
+            }
+
+            override fun onQueryTextChange(newText: String): Boolean {
+                Log.i("HomeActivity","Llego al querytextchange")
+                return true
+            }
+        })
+    }
+    fun doMySearch(query: String){
+        Log.d("HomeActivity", "nesta!")
+        Log.d("HomeActivity", query)
+    }
+
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        getIntent()
+        handleIntent(intent!!)
+    }
+
+    private fun handleIntent(intent: Intent) {
+        if (Intent.ACTION_SEARCH == intent.action) {
+            val query = intent.getStringExtra(SearchManager.QUERY)
+            val result=query
+            Toast.makeText(applicationContext, query, Toast.LENGTH_LONG).show()
+            Log.d("HomeActivity", "nesta!")
+            Log.d("HomeActivity", "$result")
+        }
+    }
 }
 
-class HomeList(val results: List<Recipe>)
-class Recipe(val title:String, val ingredients:String, val thumbnail:String)
+
+
+
+class HomeList(val meals: List<Recipe>)
+class Recipe(val strMeal:String, val strMealThumb:String, val idMeal:String)
+
+
+
+//class HomeList(val results: List<Recipe>)
+//class Recipe(val title:String, val ingredients:String, val thumbnail:String)

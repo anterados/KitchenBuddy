@@ -31,7 +31,7 @@ class LoginActivity:AppCompatActivity(){
 
                     Log.d("Login", "Signed in! UID = ${it.result!!.user!!.uid}")
 
-                    val intent = Intent(this, HomeActivity::class.java)
+                    val intent = Intent(this, IngredientActivity::class.java)
                     startActivity(intent)
                 }
 
