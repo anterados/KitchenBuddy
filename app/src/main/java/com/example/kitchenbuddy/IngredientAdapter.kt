@@ -7,11 +7,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.recipe_row.view.*
 
-class IngredientAdapter(val ingredientList: IngredientList):RecyclerView.Adapter<IngredientHolder>() {
+class IngredientAdapter(val ingredientList: IngredientActivity.IngredientList):RecyclerView.Adapter<IngredientHolder>()   {
     override fun getItemCount(): Int {
 
-        //return ingredientList.meals.count()
-        return 3
+        return ingredientList.meals.count()
+        //return 10
 
     }
 

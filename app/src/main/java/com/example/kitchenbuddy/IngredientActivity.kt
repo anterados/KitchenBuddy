@@ -2,7 +2,9 @@ package com.example.kitchenbuddy
 
 //import android.R
 import android.app.SearchManager
+import android.bluetooth.BluetoothAdapter
 import android.content.Intent
+import android.graphics.ColorSpace
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
@@ -16,6 +18,7 @@ import kotlinx.android.synthetic.main.activity_ingredient.*
 import okhttp3.*
 import java.io.IOException
 import java.util.*
+import kotlin.collections.ArrayList
 
 
 class IngredientActivity:AppCompatActivity() {
@@ -24,10 +27,14 @@ class IngredientActivity:AppCompatActivity() {
     val sastojak1=Ingredient(idIngredient = "1", strIngredient = "sastojak_1", strDescription = "opis1")
     val sastojak2=Ingredient(idIngredient = "2", strIngredient = "sastojak_2", strDescription = "opis2")
     val sastojak3=Ingredient(idIngredient = "3", strIngredient = "sastojak_3", strDescription = "opis3")
-    val prva = mutableListOf(sastojak1,sastojak2,sastojak3)
+    val prva = arrayListOf(sastojak1,sastojak2,sastojak3)
     var lista = IngredientList(prva)
     val broj = lista.meals.count()
 
+    val lista1=lista
+
+    val arrayList = ArrayList<Ingredient>()
+    val displayList = ArrayList<Ingredient>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,15 +45,23 @@ class IngredientActivity:AppCompatActivity() {
         //recyclerView_home.adapter=HomeAdapter()
         //val intent = intent
 /*
+
         if (Intent.ACTION_SEARCH == intent.action) {
             intent.getStringExtra(SearchManager.QUERY)?.also { query ->
                 doMySearch(query)
             }
 
  */
-        //handleIntent(getIntent())
+        //
+
+
+
         fetchJson()
-        Log.v("IngredientActivity", "${lista.meals.count()} + AAAAAAAA")
+        /*
+        runOnUiThread{
+            recyclerView_ingredient.adapter=IngredientAdapter(IngredientList(displayList))
+        }
+*/
     }
 
     fun fetchJson(){
@@ -63,9 +78,11 @@ class IngredientActivity:AppCompatActivity() {
 
                 val gson = GsonBuilder().create()
                 val ingredientList = gson.fromJson(body, IngredientList::class.java)
+                arrayList.addAll(ingredientList.meals)
+                displayList.addAll(arrayList)
 
                 runOnUiThread{
-                    recyclerView_ingredient.adapter=IngredientAdapter(ingredientList)
+                    recyclerView_ingredient.adapter=IngredientAdapter(IngredientList(displayList))
                 }
 
             }
@@ -91,17 +108,27 @@ class IngredientActivity:AppCompatActivity() {
             searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener{
                 override fun onQueryTextSubmit(query: String?): Boolean {
                     Log.v("IngredientActivity", "$query")
+
                    return true
                 }
 
                 override fun onQueryTextChange(newText: String?): Boolean {
                     if(newText!!.isNotEmpty()){
+                        displayList.clear()
                         val search = newText.toLowerCase(Locale.getDefault())
                         Log.v("IngredientActivity", "DAAAAA")
-                        onQueryTextSubmit(search)
-
+                        arrayList.forEach {
+                            if (it.strIngredient.toLowerCase(Locale.getDefault()).contains(search)){
+                                displayList.add(it)
+                            }
+                        }
+                        //onQueryTextSubmit(search)
+                        recyclerView_ingredient.adapter!!.notifyDataSetChanged()
                     }
                     else{
+                        displayList.clear()
+                        displayList.addAll(arrayList)
+                        recyclerView_ingredient.adapter!!.notifyDataSetChanged()
                         Log.v("IngredientActivity", "NEEEE")
                     }
                     return true
@@ -115,20 +142,6 @@ class IngredientActivity:AppCompatActivity() {
         return super.onOptionsItemSelected(item)
     }
 
-
-    fun searching(search : SearchView){
-        search.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String?): Boolean {
-                Log.i("IngredientActivity","Llego al querysubmit")
-                return false
-            }
-
-            override fun onQueryTextChange(newText: String): Boolean {
-                Log.i("IngredientActivity","Llego al querytextchange")
-                return true
-            }
-        })
-    }
     fun doMySearch(query: String){
         Log.d("IngredientActivity", "nesta!")
         Log.d("IngredientActivity", query)
@@ -149,12 +162,14 @@ class IngredientActivity:AppCompatActivity() {
             Log.d("HomeActivity", "$result")
         }
     }
+
+    class IngredientList(var meals: ArrayList<Ingredient>)
+    class Ingredient(val idIngredient:String, val strIngredient:String, val strDescription:String )
 }
 
 
 
 
-class IngredientList(val meals: MutableList<Ingredient>)
-class Ingredient(val idIngredient:String, val strIngredient:String, val strDescription:String )
+
 
 
