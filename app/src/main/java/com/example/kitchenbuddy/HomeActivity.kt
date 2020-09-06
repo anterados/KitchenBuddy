@@ -16,10 +16,11 @@ import java.io.IOException
 
 class HomeActivity : AppCompatActivity() {
 
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
-
 
         //recyclerView_home.setBackgroundColor(Color.BLUE)
         recyclerView_home.layoutManager=LinearLayoutManager(this)
@@ -37,8 +38,14 @@ class HomeActivity : AppCompatActivity() {
     }
     fun fetchJson(){
         println("Attempting to fetch JSON")
+        var getList = intent.getSerializableExtra("key") as ArrayList<String>
+        Log.d("HomeActivity", "${getList.toString()} je primljeno!!!")
         //val url = "http://www.recipepuppy.com/api/"
-        val url = "https://www.themealdb.com/api/json/v2/9973533/filter.php?i=garlic"
+        //val url = "https://www.themealdb.com/api/json/v2/9973533/filter.php?i="
+        val stringIngredient=getList.joinToString(separator = ",").replace(" ", "_").toLowerCase()
+        Log.d("HomeActivity","${stringIngredient.toString()}" +"je string!!!!!!!!!!!!!!!!!!!")
+        val url = "https://www.themealdb.com/api/json/v2/9973533/filter.php?i="+"${stringIngredient.toString()}"
+        Log.d("HomeActivity","$url" +"je url!!!!!!!!!!!!!!!!!!!")
         val request = Request.Builder().url(url).build()
         val client = OkHttpClient()
 

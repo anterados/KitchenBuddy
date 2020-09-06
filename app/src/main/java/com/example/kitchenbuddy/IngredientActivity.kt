@@ -6,6 +6,7 @@ import android.bluetooth.BluetoothAdapter
 import android.content.Intent
 import android.graphics.ColorSpace
 import android.os.Bundle
+import android.os.Message
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
@@ -15,15 +16,16 @@ import androidx.appcompat.widget.SearchView
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.gson.GsonBuilder
 import kotlinx.android.synthetic.main.activity_ingredient.*
+import kotlinx.android.synthetic.main.recipe_row.*
 import okhttp3.*
 import java.io.IOException
 import java.util.*
 import kotlin.collections.ArrayList
 
 
-class IngredientActivity:AppCompatActivity() {
+class IngredientActivity:AppCompatActivity(), CallbackInterface {
 
-
+/*
     val sastojak1=Ingredient(idIngredient = "1", strIngredient = "sastojak_1", strDescription = "opis1")
     val sastojak2=Ingredient(idIngredient = "2", strIngredient = "sastojak_2", strDescription = "opis2")
     val sastojak3=Ingredient(idIngredient = "3", strIngredient = "sastojak_3", strDescription = "opis3")
@@ -32,14 +34,15 @@ class IngredientActivity:AppCompatActivity() {
     val broj = lista.meals.count()
 
     val lista1=lista
-
+*/
+    var ingredientListforRecipe=ArrayList<String>()
     val arrayList = ArrayList<Ingredient>()
     val displayList = ArrayList<Ingredient>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_ingredient)
-        Log.v("IngredientActivity", "$broj + AAAAAAAA")
+
         //recyclerView_home.setBackgroundColor(Color.BLUE)
         recyclerView_ingredient.layoutManager= LinearLayoutManager(this)
         //recyclerView_home.adapter=HomeAdapter()
@@ -57,10 +60,13 @@ class IngredientActivity:AppCompatActivity() {
 
 
         fetchJson()
+
+
         /*
         runOnUiThread{
             recyclerView_ingredient.adapter=IngredientAdapter(IngredientList(displayList))
         }
+
 */
     }
 
@@ -80,15 +86,17 @@ class IngredientActivity:AppCompatActivity() {
                 val ingredientList = gson.fromJson(body, IngredientList::class.java)
                 arrayList.addAll(ingredientList.meals)
                 displayList.addAll(arrayList)
+                Log.v("IngredientActivity", "INGR")
 
                 runOnUiThread{
-                    recyclerView_ingredient.adapter=IngredientAdapter(IngredientList(displayList))
+                    recyclerView_ingredient.adapter=IngredientAdapter(IngredientList(displayList), this@IngredientActivity)
                 }
 
             }
             override fun onFailure(call: Call, e: IOException) {
                 TODO("Not yet implemented")
             }
+
         })
 
     }
@@ -142,6 +150,7 @@ class IngredientActivity:AppCompatActivity() {
         return super.onOptionsItemSelected(item)
     }
 
+
     fun doMySearch(query: String){
         Log.d("IngredientActivity", "nesta!")
         Log.d("IngredientActivity", query)
@@ -161,6 +170,41 @@ class IngredientActivity:AppCompatActivity() {
             Log.d("HomeActivity", "nesta!")
             Log.d("HomeActivity", "$result")
         }
+    }
+
+    override fun passDataCallback(message: String) {
+        Log.d("IngredientActivity", "$message")
+        if(!ingredientListforRecipe.contains(message)){
+            ingredientListforRecipe.add(message)
+        }
+        else
+        {
+            ingredientListforRecipe.remove(message)
+        }
+        Log.d("IngredientActivity", "${ingredientListforRecipe.toString()}")
+        //ingredient_textview_ingredient.text="Your ingredients:"+"${ingredientListforRecipe.joinToString(separator = ", ")}"
+        ingredient_textview_ingredient.text="Your ingredients:"+"${(ingredientListforRecipe.joinToString(separator = ",")).replace(" ", "_").toLowerCase()}"
+        Log.d("IngredientActivity", "${ingredientListforRecipe.count().toString()}")
+        //val intent=Intent(this, HomeActivity::class.java )
+        //intent.putExtra("key",ingredientListforRecipe)
+        //startActivity(intent)
+        findRecipeClick()
+    }
+
+    fun findRecipeClick(){
+        if(ingredientListforRecipe != null && !ingredientListforRecipe.isEmpty() && ingredientListforRecipe.count()!=0) {
+            find_recipe_button_ingredient.setOnClickListener {
+                val intent = Intent(this, HomeActivity::class.java)
+                intent.putExtra("key",ingredientListforRecipe)
+                startActivity(intent)
+            }
+        }
+        else
+            //find_recipe_button_ingredient.isClickable=false
+            find_recipe_button_ingredient.setOnClickListener {
+                Toast.makeText(this, "No ingredients selected!", Toast.LENGTH_SHORT).show()
+            }
+
     }
 
     class IngredientList(var meals: ArrayList<Ingredient>)
