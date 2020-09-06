@@ -56,9 +56,10 @@ class HomeActivity : AppCompatActivity() {
 
                 val gson = GsonBuilder().create()
                 val homeList = gson.fromJson(body, HomeList::class.java)
-                runOnUiThread{
-                    recyclerView_home.adapter=HomeAdapter(homeList)
-                }
+
+                    runOnUiThread {
+                        recyclerView_home.adapter = HomeAdapter(homeList)
+                    }
 
             }
             override fun onFailure(call: Call, e: IOException) {
