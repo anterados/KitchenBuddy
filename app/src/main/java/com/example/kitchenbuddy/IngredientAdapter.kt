@@ -41,6 +41,7 @@ class IngredientAdapter(val ingredientList: IngredientActivity.IngredientList, p
             //val intent = Intent(it.context, HomeActivity::class.java)
             //it.context.startActivity(intent)
             //listener(recipe.strIngredient)
+        holder.view.textView_recipe_ingredients.text="Click to add or remove ingredient"
         callbackInterface.passDataCallback(recipe.strIngredient)
 
         }
