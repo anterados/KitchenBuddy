@@ -25,6 +25,10 @@ class RecipeActivity:AppCompatActivity() {
         fetchJson(recipeId)
         //recipeTitle_textView.text=recipeId.toString()
 
+        findStore_button.setOnClickListener {
+            val intent = Intent(this, FindStoresActivity::class.java)
+            startActivity(intent)
+        }
 
     }
 

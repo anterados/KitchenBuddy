@@ -573,4 +573,5 @@
         <item>Herring</item>
         <item>Jam</item>
     </string-array>
+    <string name="title_activity_find_stores">Map</string>
 </resources>

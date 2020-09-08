@@ -182,8 +182,8 @@ class IngredientActivity:AppCompatActivity(), CallbackInterface {
             ingredientListforRecipe.remove(message)
         }
         Log.d("IngredientActivity", "${ingredientListforRecipe.toString()}")
-        //ingredient_textview_ingredient.text="Your ingredients:"+"${ingredientListforRecipe.joinToString(separator = ", ")}"
-        ingredient_textview_ingredient.text="Your ingredients:"+"${(ingredientListforRecipe.joinToString(separator = ",")).replace(" ", "_").toLowerCase()}"
+        ingredient_textview_ingredient.text="Your ingredients:"+"${ingredientListforRecipe.joinToString(separator = ", ")}"
+       // ingredient_textview_ingredient.text="Your ingredients:"+"${(ingredientListforRecipe.joinToString(separator = ",")).replace(" ", "_").toLowerCase()}"
         Log.d("IngredientActivity", "${ingredientListforRecipe.count().toString()}")
         //val intent=Intent(this, HomeActivity::class.java )
         //intent.putExtra("key",ingredientListforRecipe)
