@@ -6,6 +6,8 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
@@ -31,10 +33,18 @@ class MainActivity : AppCompatActivity() {
                     if (!it.isSuccessful) return@addOnCompleteListener
 
                     Log.d("Main", "User created! UID = ${it.result!!.user!!.uid}")
+                    uploadUsername()
                 }
                 .addOnFailureListener {
                     Log.d("Main", "Failed to create user: ${it.message}")
                     Toast.makeText(this, "Failed to create user: ${it.message}", Toast.LENGTH_SHORT).show()
+                }
+
+                .addOnSuccessListener {
+                    Toast.makeText(this, "Congratulations on registering", Toast.LENGTH_SHORT).show()
+                    uploadUsername()
+                    val intent = Intent(this, LoginActivity::class.java)
+                    startActivity(intent)
                 }
         }
 
@@ -45,5 +55,19 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
+
+    }
+    //private lateinit var database: DatabaseReference
+
+    private fun uploadUsername(){
+        val uid =FirebaseAuth.getInstance().uid ?:""
+        val ref = FirebaseDatabase.getInstance().getReference("/baza/$uid")
+        val user=User(uid, email_edittext_register.text.toString())
+        Log.d("MainActivity", "KONTROLA!")
+        ref.setValue(user)
+            .addOnSuccessListener {
+                Log.d("MainActivity", "PISANJE U BAZU")
+            }
     }
 }
+class User(val uid:String,val email:String)

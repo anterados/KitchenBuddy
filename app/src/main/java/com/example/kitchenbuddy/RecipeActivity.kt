@@ -4,9 +4,12 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.FirebaseDatabase
 import com.google.gson.GsonBuilder
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_home.*
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_recipe.*
 import kotlinx.android.synthetic.main.recipe_row.*
 import okhttp3.*
@@ -28,6 +31,9 @@ class RecipeActivity:AppCompatActivity() {
         findStore_button.setOnClickListener {
             val intent = Intent(this, FindStoresActivity::class.java)
             startActivity(intent)
+        }
+        button_rate.setOnClickListener {
+            uploadRating()
         }
 
     }
@@ -119,6 +125,21 @@ class RecipeActivity:AppCompatActivity() {
             }
         })
     }
+    private fun uploadRating(){
+        val uid =FirebaseAuth.getInstance().uid ?:""
+        val recipeId =  intent.getSerializableExtra("id") as String
+        val ref = FirebaseDatabase.getInstance().getReference("/RecipeRating/$recipeId/$uid")
+        val ratingNum:Float= ratingBar.rating
+        Log.d("RecipeActivity", "${ratingNum.toString()}")
+        val rating=RecipesRating(recipeId,ratingNum)
+
+        //ref.child("rating").addListenerForSingleValueEvent(rating)
+        //ref.push().setValue(rating)
+        ref.setValue(rating)
+            .addOnSuccessListener {
+                Log.d("RecipeActivity", "PISANJE U BAZU")
+            }
+    }
 }
 
 class RecipeFull(val meals: List<RecipeView>)
@@ -133,6 +154,7 @@ class RecipeView(val strMeal:String, val strMealThumb:String, val idMeal:String,
                  val strMeasure11: String,val strMeasure12: String,val strMeasure13: String,val strMeasure14: String,val strMeasure15: String,
                  val strMeasure16: String,val strMeasure17: String,val strMeasure18: String,val strMeasure19: String,val strMeasure20: String)
 
+class RecipesRating(val recID:String, val rating:Float)
 /*
 class StrIngredient(val strIngredient1: String, val strIngredient2: String, val strIngredient3: String, val strIngredient4: String,
                     val strIngredient5: String, val strIngredient6: String,val strIngredient7: String,val strIngredient8: String,

@@ -37,12 +37,14 @@ class HomeAdapter(val homeList: HomeList):RecyclerView.Adapter<RecipeHolder>() {
             val intent = Intent(context,RecipeActivity::class.java)
             intent.putExtra("id",recipe.idMeal)
             Log.d("HomeAdapter","${recipe.idMeal}" +"je ID!!!!!!!!!!!!!!!!!!!")
+
             context.startActivity(intent)
         }
     }
 
+
+
 }
 
 class RecipeHolder(val view:View):RecyclerView.ViewHolder(view){
-
 }
