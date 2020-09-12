@@ -5,15 +5,16 @@ import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import com.google.gson.GsonBuilder
 import com.squareup.picasso.Picasso
-import kotlinx.android.synthetic.main.activity_home.*
-import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_recipe.*
-import kotlinx.android.synthetic.main.recipe_row.*
 import okhttp3.*
 import java.io.IOException
+
 
 class RecipeActivity:AppCompatActivity() {
 
@@ -34,6 +35,10 @@ class RecipeActivity:AppCompatActivity() {
         }
         button_rate.setOnClickListener {
             uploadRating()
+            runOnUiThread(){
+                //fetchRating()
+            }
+
         }
 
     }
@@ -105,7 +110,7 @@ class RecipeActivity:AppCompatActivity() {
                 val finalList= mutableListOf<String>()
                 for(i in 0..19){
                     if(listaSastojaka[i]!=null && listaSastojaka[i]!=""){
-                        finalList.add("${listaSastojaka[i]}"+" - "+"${listaKolicina[i]}")
+                        finalList.add("\n${listaSastojaka[i]}"+" - "+"${listaKolicina[i]}")
                     }
 
                 }
@@ -113,7 +118,8 @@ class RecipeActivity:AppCompatActivity() {
                 Log.d("RecipeActivity", "LISTA is: ${listaSastojaka.toString()}")
                 runOnUiThread {
                     recipeTitle_textView.text=recipefull.meals[0].strMeal.toString()
-                    ingredients_textView.text=finalList.toString()
+
+                    ingredients_textView.text=finalList.toString().removePrefix("[").removeSuffix("]")
                     recipeText_textView.text=recipefull.meals[0].strInstructions.toString()
                     val recipeImage = recipefull.meals[0].strMealThumb.toString()
                     Picasso.get().load("$recipeImage").into(recipe_imageView)
@@ -130,7 +136,7 @@ class RecipeActivity:AppCompatActivity() {
         val recipeId =  intent.getSerializableExtra("id") as String
         val ref = FirebaseDatabase.getInstance().getReference("/RecipeRating/$recipeId/$uid")
         val ratingNum:Float= ratingBar.rating
-        Log.d("RecipeActivity", "${ratingNum.toString()}")
+        Log.d("RecipeActivity", "POSLANO ${ratingNum.toString()}")
         val rating=RecipesRating(recipeId,ratingNum)
 
         //ref.child("rating").addListenerForSingleValueEvent(rating)
@@ -139,6 +145,50 @@ class RecipeActivity:AppCompatActivity() {
             .addOnSuccessListener {
                 Log.d("RecipeActivity", "PISANJE U BAZU")
             }
+    }
+
+    private fun fetchRating(){
+        val uid =FirebaseAuth.getInstance().uid ?:""
+        val recipeId =  intent.getSerializableExtra("id") as String
+        val ref2 = FirebaseDatabase.getInstance().getReference().child("RecipeRating").child("$recipeId")//("/RecipeRating/$recipeId/")
+        ref2.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                var total:Float = 0F
+                var count= 0
+                Log.d("RecipeActivity", "DIJETE!!!!!!!!!!! ${dataSnapshot.toString()}")
+                runOnUiThread {
+                    for (child in dataSnapshot.children) {
+                        Log.d("RecipeActivity", "DIJETE2!!!!!!!!!!! ${child.value.toString()}")
+                        var mySubString = child.value.toString().substring(
+                           child.value.toString().indexOf("=") + 1,
+                            child.value.toString().indexOf(",")
+                        )
+                        Log.d("RecipeActivity", "String!!!!!!!!!!! ${mySubString.toString()}")
+                        val number = mySubString.toFloat()
+                        //val key=dataSnapshot.
+                        val rating = dataSnapshot.child("rating")
+                            .getValue(Float::class.java)//!! //child("rating"). Float::class.java
+
+                        //val rating2=dataSnapshot.value.toString()
+                        Log.d("RecipeActivity", "String!!!!!!!!!!! ${number.toString()}")
+                        Log.d("RecipeActivity", "URating!!!!!!!!!!! ${rating.toString()}")
+                        //Log.d("RecipeActivity", "KEY!!!!!!!!!!! ${mySubString.toString()}")
+                        //Log.d("RecipeActivity", "URating2!!!!!!!!!!! ${rating2.toString()}")
+                        total = total + rating!!
+                        count = count + 1
+                        //Log.d("RecipeActivity", "UKUPNO!!!!!!!!!!! ${total.toString()}")
+                        //Log.d("RecipeActivity", "Koliko!!!!!!!!!!! ${count.toString()}")
+                    }
+                }
+                //ratingBar.rating=total.toFloat()
+
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+                throw databaseError.toException() // don't ignore errors
+                Log.d("RecipeActivity", "loadPost:onCancelled", databaseError.toException())
+            }
+        })
     }
 }
 

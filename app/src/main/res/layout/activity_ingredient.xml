@@ -24,7 +24,8 @@
     <Button
         android:id="@+id/find_recipe_button_ingredient"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
+        android:fadingEdge="horizontal|vertical"
         android:text="FIND RECIPES"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -39,6 +40,19 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/button"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:background="@android:color/holo_red_light"
+        android:fadingEdge="horizontal|vertical"
+        android:text="CLEAR ALL"
+        app:layout_constraintBottom_toBottomOf="@+id/find_recipe_button_ingredient"
+        app:layout_constraintEnd_toStartOf="@+id/find_recipe_button_ingredient"
+        app:layout_constraintHorizontal_bias="0.262"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/recyclerView_ingredient" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

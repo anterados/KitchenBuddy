@@ -4,15 +4,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="#FDC86C"
     android:layout_margin="4dp"
-    >
+    android:background="#FDC86C">
 
 
     <ImageView
         android:id="@+id/imageView_recipe_thumbnail"
         android:layout_width="100dp"
         android:layout_height="100dp"
+        android:background="#EDB657"
+        android:fadingEdge="vertical"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@mipmap/ic_launcher_my_foreground" />
@@ -26,7 +27,7 @@
         android:layout_marginEnd="8dp"
         android:gravity="center"
         android:text="Naslov recepta"
-        android:textSize="15dp"
+        android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/imageView_recipe_thumbnail"
         app:layout_constraintTop_toTopOf="parent" />
@@ -37,7 +38,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
-        android:text="Click for details..."
+        android:text=""
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/imageView_recipe_thumbnail"

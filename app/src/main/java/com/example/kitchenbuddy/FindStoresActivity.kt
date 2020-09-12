@@ -166,7 +166,7 @@ class FindStoresActivity : AppCompatActivity(), OnMapReadyCallback, OnMarkerClic
 
         val markerOptions = MarkerOptions().position(location).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE))
         //map.clear()
-        map.addMarker(markerOptions)
+        //map.addMarker(markerOptions)
         //map.addMarker(MarkerOptions().position(sydney).title("Marker in Sydney"))
 
 

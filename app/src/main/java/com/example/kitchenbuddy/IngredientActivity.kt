@@ -60,7 +60,8 @@ class IngredientActivity:AppCompatActivity(), CallbackInterface {
 
 
         fetchJson()
-
+        //findRecipeClick()
+        removeAll()
 
         /*
         runOnUiThread{
@@ -182,27 +183,47 @@ class IngredientActivity:AppCompatActivity(), CallbackInterface {
             ingredientListforRecipe.remove(message)
         }
         Log.d("IngredientActivity", "${ingredientListforRecipe.toString()}")
-        ingredient_textview_ingredient.text="Your ingredients:"+"${ingredientListforRecipe.joinToString(separator = ", ")}"
+        ingredient_textview_ingredient.text="Your ingredients: "+"${ingredientListforRecipe.joinToString(separator = ", ")}"
        // ingredient_textview_ingredient.text="Your ingredients:"+"${(ingredientListforRecipe.joinToString(separator = ",")).replace(" ", "_").toLowerCase()}"
         Log.d("IngredientActivity", "${ingredientListforRecipe.count().toString()}")
         //val intent=Intent(this, HomeActivity::class.java )
         //intent.putExtra("key",ingredientListforRecipe)
         //startActivity(intent)
         findRecipeClick()
+
     }
 
     fun findRecipeClick(){
-        if(ingredientListforRecipe != null && !ingredientListforRecipe.isEmpty() && ingredientListforRecipe.count()!=0) {
+        if(ingredientListforRecipe.count()!=0 ||ingredientListforRecipe.size!=0) {
             find_recipe_button_ingredient.setOnClickListener {
+                Log.d("IngredientActivity", "OCISCENA:${ingredientListforRecipe.toString()}")
+                Log.d("IngredientActivity", "BROJ:${ingredientListforRecipe.size.toString()}")
+                //removeAll()
                 val intent = Intent(this, HomeActivity::class.java)
                 intent.putExtra("key",ingredientListforRecipe)
                 startActivity(intent)
             }
         }
-        else
+        else if(ingredientListforRecipe.count()==0)
             //find_recipe_button_ingredient.isClickable=false
             find_recipe_button_ingredient.setOnClickListener {
                 Toast.makeText(this, "No ingredients selected!", Toast.LENGTH_SHORT).show()
+            }
+
+    }
+
+    fun removeAll(){
+        if(ingredientListforRecipe != null || !ingredientListforRecipe.isEmpty() || ingredientListforRecipe.count()!=0) {
+            button.setOnClickListener {
+                ingredientListforRecipe.clear()
+                Log.d("IngredientActivity", "OCISCENA:${ingredientListforRecipe.toString()}")
+                ingredient_textview_ingredient.text="Your ingredients:"
+            }
+        }
+        else
+        //find_recipe_button_ingredient.isClickable=false
+            button.setOnClickListener {
+                Toast.makeText(this, "List already empty", Toast.LENGTH_SHORT).show()
             }
 
     }

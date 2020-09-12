@@ -4,12 +4,15 @@ import android.app.SearchManager
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.View
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.gson.GsonBuilder
 import kotlinx.android.synthetic.main.activity_home.*
+import kotlinx.android.synthetic.main.activity_recipe.*
 import okhttp3.*
 import java.io.IOException
 
@@ -17,7 +20,7 @@ import java.io.IOException
 class HomeActivity : AppCompatActivity() {
 
 
-
+    private var emptyData: TextView? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
@@ -26,6 +29,7 @@ class HomeActivity : AppCompatActivity() {
         recyclerView_home.layoutManager=LinearLayoutManager(this)
         //recyclerView_home.adapter=HomeAdapter()
         //val intent = intent
+        emptyData = findViewById(R.id.empty_view) as TextView
 /*
         if (Intent.ACTION_SEARCH == intent.action) {
             intent.getStringExtra(SearchManager.QUERY)?.also { query ->
@@ -35,6 +39,7 @@ class HomeActivity : AppCompatActivity() {
  */
         //handleIntent(getIntent())
         fetchJson()
+        recyclerView_home.visibility = View.VISIBLE
     }
     fun fetchJson(){
         println("Attempting to fetch JSON")
@@ -42,8 +47,11 @@ class HomeActivity : AppCompatActivity() {
         Log.d("HomeActivity", "${getList.toString()} je primljeno!!!")
         //val url = "http://www.recipepuppy.com/api/"
         //val url = "https://www.themealdb.com/api/json/v2/9973533/filter.php?i="
-        val stringIngredient=getList.joinToString(separator = ",").replace(" ", "_").toLowerCase()
+        var stringIngredient=getList.joinToString(separator = ",").replace(" ", "_").toLowerCase()
         Log.d("HomeActivity","${stringIngredient.toString()}" +"je string!!!!!!!!!!!!!!!!!!!")
+        if(stringIngredient==""){
+            stringIngredient="0"
+        }
         val url = "https://www.themealdb.com/api/json/v2/9973533/filter.php?i="+"${stringIngredient.toString()}"
         Log.d("HomeActivity","$url" +"je url!!!!!!!!!!!!!!!!!!!")
         val request = Request.Builder().url(url).build()
@@ -57,10 +65,20 @@ class HomeActivity : AppCompatActivity() {
                 val gson = GsonBuilder().create()
                 val homeList = gson.fromJson(body, HomeList::class.java)
 
+                if(homeList.meals.isNullOrEmpty()){
+                    //Toast.makeText(this@HomeActivity, "No ingredients selected!", Toast.LENGTH_SHORT).show()
+                    //recyclerView_home.visibility = View.GONE
+                    //empty_view.visibility=View.VISIBLE
+                    //val intent = Intent(this@HomeActivity, IngredientActivity::class.java)
+
+                }
+                else {
                     runOnUiThread {
+                        emptyData!!.setVisibility(View.GONE)
+
                         recyclerView_home.adapter = HomeAdapter(homeList)
                     }
-
+                }
             }
             override fun onFailure(call: Call, e: IOException) {
                 TODO("Not yet implemented")
