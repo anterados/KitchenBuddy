@@ -14,6 +14,8 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.ktx.Firebase
 import com.google.gson.GsonBuilder
 import kotlinx.android.synthetic.main.activity_ingredient.*
 import kotlinx.android.synthetic.main.recipe_row.*
@@ -148,6 +150,20 @@ class IngredientActivity:AppCompatActivity(), CallbackInterface {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when(item.title){
+            "My favorites" -> {
+                val intent = Intent(this, FavoritesActivity::class.java)
+                startActivity(intent)
+
+            }
+            "Log out" -> {
+                FirebaseAuth.getInstance().signOut()
+                finish()
+                val intent = Intent(this, LoginActivity::class.java)
+                startActivity(intent)
+                Toast.makeText(this, "You signed out successfully!", Toast.LENGTH_SHORT).show()
+            }
+        }
         return super.onOptionsItemSelected(item)
     }
 

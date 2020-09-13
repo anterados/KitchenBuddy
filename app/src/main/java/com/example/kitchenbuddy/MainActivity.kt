@@ -19,9 +19,10 @@ class MainActivity : AppCompatActivity() {
 
             val email = email_edittext_register.text.toString()
             val password = password_edittext_register.text.toString()
+            val username=username_edittext_register.text.toString()
 
-            if(email.isEmpty() || password.isEmpty()){
-                Toast.makeText(this, "Username and/or password empty!", Toast.LENGTH_SHORT).show()
+            if(email.isEmpty() || password.isEmpty() || username.isEmpty()){
+                Toast.makeText(this, "Something's missing!", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
@@ -41,11 +42,12 @@ class MainActivity : AppCompatActivity() {
                 }
 
                 .addOnSuccessListener {
-                    Toast.makeText(this, "Congratulations on registering", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "Congratulations! Proceed to sign in.", Toast.LENGTH_SHORT).show()
                     uploadUsername()
                     val intent = Intent(this, LoginActivity::class.java)
                     startActivity(intent)
                 }
+
         }
 
         already_registered_textview_register.setOnClickListener {
@@ -61,8 +63,8 @@ class MainActivity : AppCompatActivity() {
 
     private fun uploadUsername(){
         val uid =FirebaseAuth.getInstance().uid ?:""
-        val ref = FirebaseDatabase.getInstance().getReference("/baza/$uid")
-        val user=User(uid, email_edittext_register.text.toString())
+        val ref = FirebaseDatabase.getInstance().getReference("/users/$uid")
+        val user=User(uid, email_edittext_register.text.toString(), username_edittext_register.text.toString())
         Log.d("MainActivity", "KONTROLA!")
         ref.setValue(user)
             .addOnSuccessListener {
@@ -70,4 +72,4 @@ class MainActivity : AppCompatActivity() {
             }
     }
 }
-class User(val uid:String,val email:String)
+class User(val uid:String,val email:String, val username:String)

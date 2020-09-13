@@ -16,14 +16,14 @@ import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_home.view.*
 import kotlinx.android.synthetic.main.recipe_row.view.*
 
-class HomeAdapter(val homeList: HomeList):RecyclerView.Adapter<RecipeHolder>() {
+class FavoritesAdapter(val favList: MutableList<RecipeFav>):RecyclerView.Adapter<FavoriteHolder>() {
 
     var outer:Float=0F;
     override fun getItemCount(): Int {
-            return homeList.meals.count()
+        return favList.count()
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecipeHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FavoriteHolder {
 
 
         Log.d("HomeAdapter","${parent.toString()}" +"je RODIOC")
@@ -31,21 +31,22 @@ class HomeAdapter(val homeList: HomeList):RecyclerView.Adapter<RecipeHolder>() {
         val layoutInflater=LayoutInflater.from(parent?.context)
         val cellForRow = layoutInflater.inflate(R.layout.recipe_row, parent, false)
 
-        return RecipeHolder(cellForRow)
+        return FavoriteHolder(cellForRow)
 
     }
 
-    override fun onBindViewHolder(holder: RecipeHolder, position: Int) {
-        val recipe=homeList.meals.get(position)
-        holder.view.textView_recipe_title.text = recipe.strMeal
+    override fun onBindViewHolder(holder: FavoriteHolder, position: Int) {
+        val recipe=favList.get(position)
+        holder.view.textView_recipe_title.text = recipe.title_fav
         //holder.view.textView_recipe_ingredients.text = recipe.strIngredient1
 
         val thumbnailImage=holder.view.imageView_recipe_thumbnail
-        Picasso.get().load(recipe.strMealThumb).into(thumbnailImage)
-        val rating=fetchRating(recipe.idMeal,holder,position)
+        Picasso.get().load(recipe.image_fav).into(thumbnailImage)
+        //val rating=fetchRating(recipe.idMeal,holder,position)
         //ubaciti rating******
         Log.d("HomeAdapter","${outer.toString()}" +"je RATING")
 
+        /* za otvaranje recepta
         holder.view.setOnClickListener {
             Log.d("HomeAdapter","${recipe.idMeal}" +"je ID!!!!!!!!!!(prvi)!!!!!!!!!")
             val context=holder.view.context
@@ -55,8 +56,10 @@ class HomeAdapter(val homeList: HomeList):RecyclerView.Adapter<RecipeHolder>() {
 
             context.startActivity(intent)
         }
+
+         */
     }
-    fun fetchRating(id:String,holder: RecipeHolder,position: Int):Float{
+    fun fetchRating(id:String,holder: FavoriteHolder,position: Int):Float{
         val uid = FirebaseAuth.getInstance().uid ?:""
         val recipeId =  id
         var returnValue:Float=0F
@@ -66,30 +69,30 @@ class HomeAdapter(val homeList: HomeList):RecyclerView.Adapter<RecipeHolder>() {
                 var total:Float = 0F
                 var count= 0
                 Log.d("RecipeActivity", "DIJETE!!!!!!!!!!! ${dataSnapshot.toString()}")
-                    for (child in dataSnapshot.children) {
-                        Log.d("RecipeActivity", "DIJETE2!!!!!!!!!!! ${child.value.toString()}")
-                        var mySubString = child.value.toString().substring(
-                            child.value.toString().indexOf("=") + 1,
-                            child.value.toString().indexOf(",")
-                        )
-                        Log.d("RecipeActivity", "String!!!!!!!!!!! ${mySubString.toString()}")
-                        val number = mySubString.toFloat()
-                        //val key=dataSnapshot.
-                        //val rating = dataSnapshot.child("rating").getValue(Float::class.java)//!! //child("rating"). Float::class.java
+                for (child in dataSnapshot.children) {
+                    Log.d("RecipeActivity", "DIJETE2!!!!!!!!!!! ${child.value.toString()}")
+                    var mySubString = child.value.toString().substring(
+                        child.value.toString().indexOf("=") + 1,
+                        child.value.toString().indexOf(",")
+                    )
+                    Log.d("RecipeActivity", "String!!!!!!!!!!! ${mySubString.toString()}")
+                    val number = mySubString.toFloat()
+                    //val key=dataSnapshot.
+                    //val rating = dataSnapshot.child("rating").getValue(Float::class.java)//!! //child("rating"). Float::class.java
 
-                        //val rating2=dataSnapshot.value.toString()
-                        Log.d("RecipeActivity", "String!!!!!!!!!!! ${number.toString()}")
-                        //Log.d("RecipeActivity", "URating!!!!!!!!!!! ${rating.toString()}")
-                        //Log.d("RecipeActivity", "KEY!!!!!!!!!!! ${mySubString.toString()}")
-                        //Log.d("RecipeActivity", "URating2!!!!!!!!!!! ${rating2.toString()}")
-                        total = total + number!!
-                        count = count + 1
-                        //returnValue=total
-                        //Log.d("RecipeActivity", "UKUPNO!!!!!!!!!!! ${total.toString()}")
-                        //Log.d("RecipeActivity", "Koliko!!!!!!!!!!! ${count.toString()}")
+                    //val rating2=dataSnapshot.value.toString()
+                    Log.d("RecipeActivity", "String!!!!!!!!!!! ${number.toString()}")
+                    //Log.d("RecipeActivity", "URating!!!!!!!!!!! ${rating.toString()}")
+                    //Log.d("RecipeActivity", "KEY!!!!!!!!!!! ${mySubString.toString()}")
+                    //Log.d("RecipeActivity", "URating2!!!!!!!!!!! ${rating2.toString()}")
+                    total = total + number!!
+                    count = count + 1
+                    //returnValue=total
+                    //Log.d("RecipeActivity", "UKUPNO!!!!!!!!!!! ${total.toString()}")
+                    //Log.d("RecipeActivity", "Koliko!!!!!!!!!!! ${count.toString()}")
 
 
-                    }
+                }
 
                 //ratingBar.rating=total.toFloat()
                 Log.d("HomeActivity", "TOTAL!!!!!!!!!!! ${total.toString()}")
@@ -103,7 +106,7 @@ class HomeAdapter(val homeList: HomeList):RecyclerView.Adapter<RecipeHolder>() {
                     holder.view.ratingBar3.rating=returnValue
                 }
                 else
-                holder.view.textView_recipe_ingredients.text="Not rated yet!"
+                    holder.view.textView_recipe_ingredients.text="Not rated yet!"
             }
 
 
@@ -127,5 +130,5 @@ class HomeAdapter(val homeList: HomeList):RecyclerView.Adapter<RecipeHolder>() {
 
 }
 
-class RecipeHolder(val view:View):RecyclerView.ViewHolder(view){
+class FavoriteHolder(val view:View):RecyclerView.ViewHolder(view){
 }

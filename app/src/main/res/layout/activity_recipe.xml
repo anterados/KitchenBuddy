@@ -23,10 +23,10 @@
             android:id="@+id/ingredients_textView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginStart="8dp"
+            android:gravity="start"
             android:text="TextView"
             app:layout_constraintBottom_toTopOf="@id/recipeText_textView"
-            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/recipe_imageView" />
 
@@ -45,18 +45,21 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
+            android:layout_marginTop="4dp"
             android:text="TextView"
             android:textSize="18sp"
             app:layout_constraintBottom_toBottomOf="@+id/recipe_imageView"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/recipe_imageView"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toBottomOf="@+id/button_favorite" />
 
         <TextView
             android:id="@+id/recipeText_textView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginStart="4dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="4dp"
             android:text="TextView"
             app:layout_constraintBottom_toTopOf="@id/ratingBar"
             app:layout_constraintEnd_toEndOf="parent"
@@ -90,12 +93,21 @@
             android:id="@+id/button_rate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="8dp"
             android:text="Rate this recipe!"
             app:layout_constraintBottom_toTopOf="@id/findStore_button"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/ratingBar" />
+
+        <Button
+            android:id="@+id/button_favorite"
+            android:layout_width="50dp"
+            android:layout_height="55dp"
+            android:layout_marginTop="4dp"
+            android:background="@drawable/ic_favorite"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

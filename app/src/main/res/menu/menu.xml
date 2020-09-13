@@ -10,6 +10,17 @@
         app:showAsAction="always|collapseActionView"
         android:iconifiedByDefault="false"
         />
+    <item
+        android:id="@+id/dropdown_my_favorites"
+        android:title="My favorites"
+        app:showAsAction="never"
+
+        />
+    <item
+        android:id="@+id/log_out"
+        android:title="Log out"
+        app:showAsAction="never"
+        />
 
 </menu>
 

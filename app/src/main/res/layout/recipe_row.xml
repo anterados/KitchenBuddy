@@ -10,11 +10,12 @@
 
     <ImageView
         android:id="@+id/imageView_recipe_thumbnail"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
+        android:layout_width="101dp"
+        android:layout_height="101dp"
         android:background="#EDB657"
         android:fadingEdge="vertical"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/textView_recipe_title"
+        app:layout_constraintStart_toStartOf="@id/textView_recipe_title"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@mipmap/ic_launcher_my_foreground" />
 
@@ -43,4 +44,16 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/imageView_recipe_thumbnail"
         app:layout_constraintTop_toBottomOf="@+id/textView_recipe_title" />
+
+    <RatingBar
+        android:visibility="gone"
+        android:id="@+id/ratingBar3"
+        android:layout_width="234dp"
+        android:layout_height="41dp"
+        android:scaleX="0.3"
+        android:scaleY="0.3"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/imageView_recipe_thumbnail" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

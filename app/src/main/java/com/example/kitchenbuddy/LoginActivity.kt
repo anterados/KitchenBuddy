@@ -15,17 +15,17 @@ class LoginActivity:AppCompatActivity(){
         setContentView(R.layout.activity_login)
 
         sign_in_button_login.setOnClickListener {
-            val username = username_edittext_login.text.toString()
+            val email = username_edittext_login.text.toString()
             val password= password_edittext_login.text.toString()
 
-            if(username.isEmpty() || password.isEmpty()){
+            if(email.isEmpty() || password.isEmpty()){
                 Toast.makeText(this, "Username and/or password empty!", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
-            Log.d("Login", "Sign in attempt: $username + $password !")
+            Log.d("Login", "Sign in attempt: $email + $password !")
 
-            FirebaseAuth.getInstance().signInWithEmailAndPassword(username, password)
+            FirebaseAuth.getInstance().signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener {
                     if (!it.isSuccessful) return@addOnCompleteListener
 

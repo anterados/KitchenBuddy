@@ -1,9 +1,12 @@
 package com.example.kitchenbuddy
 
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.Color.red
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -11,7 +14,10 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.google.gson.GsonBuilder
 import com.squareup.picasso.Picasso
+import kotlinx.android.synthetic.main.activity_ingredient.*
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_recipe.*
+import kotlinx.android.synthetic.main.recipe_row.*
 import okhttp3.*
 import java.io.IOException
 
@@ -19,13 +25,13 @@ import java.io.IOException
 class RecipeActivity:AppCompatActivity() {
 
     //val recipeId = intent.getSerializableExtra("id") as String
-
+    var imgString:String=""
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val recipeId = intent.getSerializableExtra("id") as String
         Log.d("RecipeActivity", "ID is: $recipeId")
         setContentView(R.layout.activity_recipe)
-
+        fetchRating()
         fetchJson(recipeId)
         //recipeTitle_textView.text=recipeId.toString()
 
@@ -35,9 +41,15 @@ class RecipeActivity:AppCompatActivity() {
         }
         button_rate.setOnClickListener {
             uploadRating()
-            runOnUiThread(){
-                //fetchRating()
-            }
+            //runOnUiThread(){
+
+            //}
+
+        }
+        button_favorite.setOnClickListener {
+            val res=button_favorite.resources
+            Log.d("RecipeActivity", "ID is: ${res.toString()}")
+           setRecipeFavorite(recipeId)
 
         }
 
@@ -122,6 +134,7 @@ class RecipeActivity:AppCompatActivity() {
                     ingredients_textView.text=finalList.toString().removePrefix("[").removeSuffix("]")
                     recipeText_textView.text=recipefull.meals[0].strInstructions.toString()
                     val recipeImage = recipefull.meals[0].strMealThumb.toString()
+                    imgString=recipefull.meals[0].strMealThumb.toString()
                     Picasso.get().load("$recipeImage").into(recipe_imageView)
                 }
 
@@ -148,6 +161,7 @@ class RecipeActivity:AppCompatActivity() {
     }
 
     private fun fetchRating(){
+        var returnValue:Float=0F
         val uid =FirebaseAuth.getInstance().uid ?:""
         val recipeId =  intent.getSerializableExtra("id") as String
         val ref2 = FirebaseDatabase.getInstance().getReference().child("RecipeRating").child("$recipeId")//("/RecipeRating/$recipeId/")
@@ -166,22 +180,24 @@ class RecipeActivity:AppCompatActivity() {
                         Log.d("RecipeActivity", "String!!!!!!!!!!! ${mySubString.toString()}")
                         val number = mySubString.toFloat()
                         //val key=dataSnapshot.
-                        val rating = dataSnapshot.child("rating")
-                            .getValue(Float::class.java)//!! //child("rating"). Float::class.java
+                        //val rating = dataSnapshot.child("rating")
+                         //   .getValue(Float::class.java)//!! //child("rating"). Float::class.java
 
                         //val rating2=dataSnapshot.value.toString()
                         Log.d("RecipeActivity", "String!!!!!!!!!!! ${number.toString()}")
-                        Log.d("RecipeActivity", "URating!!!!!!!!!!! ${rating.toString()}")
+                        //Log.d("RecipeActivity", "URating!!!!!!!!!!! ${rating.toString()}")
                         //Log.d("RecipeActivity", "KEY!!!!!!!!!!! ${mySubString.toString()}")
                         //Log.d("RecipeActivity", "URating2!!!!!!!!!!! ${rating2.toString()}")
-                        total = total + rating!!
+                        total = total + number!!
                         count = count + 1
+
                         //Log.d("RecipeActivity", "UKUPNO!!!!!!!!!!! ${total.toString()}")
                         //Log.d("RecipeActivity", "Koliko!!!!!!!!!!! ${count.toString()}")
                     }
                 }
                 //ratingBar.rating=total.toFloat()
-
+                returnValue=total/count
+                ratingBar.rating=returnValue
             }
 
             override fun onCancelled(databaseError: DatabaseError) {
@@ -190,7 +206,18 @@ class RecipeActivity:AppCompatActivity() {
             }
         })
     }
+    fun setRecipeFavorite(recipe_id: String){
+        val uid =FirebaseAuth.getInstance().uid ?:""
+        val ref = FirebaseDatabase.getInstance().getReference("/users/$uid/$recipe_id")
+        val favorite=FavRecipe(recipeTitle_textView.text.toString(),recipe_id, imgString)
+        Log.d("MainActivity", "KONTROLA!")
+        ref.setValue(favorite)
+            .addOnSuccessListener {
+                Log.d("MainActivity", "PISANJE U BAZU")
+            }
+    }
 }
+class FavRecipe(val title:String, val id:String, val image:String)
 
 class RecipeFull(val meals: List<RecipeView>)
 class RecipeView(val strMeal:String, val strMealThumb:String, val idMeal:String, val strInstructions:String,
