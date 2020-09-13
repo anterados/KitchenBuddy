@@ -12,9 +12,9 @@ import kotlinx.android.synthetic.main.recipe_row.view.*
 
 class IngredientAdapter(val ingredientList: IngredientActivity.IngredientList, private val callbackInterface: CallbackInterface):RecyclerView.Adapter<IngredientHolder>()   {
     override fun getItemCount(): Int {
-
+        //Log.v("IngredientActivity", "COUNT${ingredientList.meals.count()}")
         return ingredientList.meals.count()
-        Log.v("IngredientActivity", "${ingredientList.meals.count()}")
+
         //return 10
 
     }

@@ -70,24 +70,32 @@ class HomeActivity : AppCompatActivity() {
             override fun onResponse(call: Call, response: Response) {
                 val body = response.body?.string()
                 println(body)
-
-                val gson = GsonBuilder().create()
-                val homeList = gson.fromJson(body, HomeList::class.java)
-
-                if(homeList.meals.isNullOrEmpty()){
-                    //Toast.makeText(this@HomeActivity, "No ingredients selected!", Toast.LENGTH_SHORT).show()
-                    //recyclerView_home.visibility = View.GONE
-                    //empty_view.visibility=View.VISIBLE
-                    //val intent = Intent(this@HomeActivity, IngredientActivity::class.java)
-
+                if (body != null) {
+                    if(body.contains("Undefined variable")){
+                        Log.d("HomeActivity","BELAJ!")
+                        Toast.makeText(this@HomeActivity, "Too many ingredients selected!", Toast.LENGTH_SHORT).show()
                 }
-                else {
-                    runOnUiThread {
-                        emptyData!!.setVisibility(View.GONE)
+                    else{
+                        val gson = GsonBuilder().create()
+                        val homeList = gson.fromJson(body, HomeList::class.java)
 
-                        recyclerView_home.adapter = HomeAdapter(homeList)
+                        if(homeList.meals.isNullOrEmpty()) {
+                            //Toast.makeText(this@HomeActivity, "No ingredients selected!", Toast.LENGTH_SHORT).show()
+                            //recyclerView_home.visibility = View.GONE
+                            //empty_view.visibility=View.VISIBLE
+                            //val intent = Intent(this@HomeActivity, IngredientActivity::class.java)
+
+                        }
+                        else {
+                            runOnUiThread {
+                                emptyData!!.setVisibility(View.GONE)
+
+                                recyclerView_home.adapter = HomeAdapter(homeList)
+                            }
+                        }
                     }
                 }
+
             }
             override fun onFailure(call: Call, e: IOException) {
                 TODO("Not yet implemented")

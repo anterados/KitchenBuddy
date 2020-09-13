@@ -67,30 +67,27 @@ class FavoritesActivity:AppCompatActivity(){
 
                 for (child in dataSnapshot.children) {
                     Log.d("RecipeActivity", "DIJETE2!!!!!!!!!!! ${child.value.toString()}")
-                    val title = dataSnapshot.child("title")
-                       .getValue(String::class.java)//!! //child("rating"). Float::class.java
                     Log.d("RecipeActivity", "TITLEEEEE!!!!!!!!!!! ${title.toString()}")
-                    var imagestring = child.value.toString().substring(
-                        child.value.toString().indexOf("image="),
-                        child.value.toString().indexOf(",")
-                    )
-                    var titlestring = child.value.toString().substring(
-                        child.value.toString().indexOf("title="),
-                        child.value.toString().indexOf("}")
-                    )
-                    //Log.d("RecipeActivity", "naslov!!!!!!!!!!! ${titlestring.removePrefix("title=").toString()}")
-                    //Log.d("RecipeActivity", "slika!!!!!!!!!!! ${imagestring.removePrefix("image=").toString()}")
-                    tit=titlestring.removePrefix("title=").toString()
-                    img=imagestring.removePrefix("image=").toString()
-                    Log.d("RecipeActivity", "TIT!!!!!!!!!!! ${tit.toString()}")
-                    Log.d("RecipeActivity", "IMG!!!!!!!!!!! ${img.toString()}")
-                    fetchList.add(RecipeFav(tit, img))
-
+                    if(child.value.toString().contains("image")) {
+                        var imagestring = child.value.toString().substring(
+                            child.value.toString().indexOf("image="),
+                            child.value.toString().indexOf(",")
+                        )
+                        var titlestring = child.value.toString().substring(
+                            child.value.toString().indexOf("title="),
+                            child.value.toString().indexOf("}")
+                        )
+                        //Log.d("RecipeActivity", "naslov!!!!!!!!!!! ${titlestring.removePrefix("title=").toString()}")
+                        //Log.d("RecipeActivity", "slika!!!!!!!!!!! ${imagestring.removePrefix("image=").toString()}")
+                        tit = titlestring.removePrefix("title=").toString()
+                        img = imagestring.removePrefix("image=").toString()
+                        Log.d("RecipeActivity", "TIT!!!!!!!!!!! ${tit.toString()}")
+                        Log.d("RecipeActivity", "IMG!!!!!!!!!!! ${img.toString()}")
+                        fetchList.add(RecipeFav(tit, img))
+                    }
                     //fetchList[i].title_fav=titlestring.removePrefix("title=").toString()
                     //fetchList[i].image_fav=imagestring.removePrefix("image=").toString()
-                    Log.d("RecipeActivity", "lista!!!!!!!!!!! ${ fetchList[i].title_fav.toString()}")
-                    Log.d("RecipeActivity", "lista!!!!!!!!!!! ${ fetchList[i].image_fav.toString()}")
-                    i += 1
+
 
                 }
                 Log.d("RecipeActivity", "lista unutra!!!!!!!!!!! ${ fetchList.toString()}")

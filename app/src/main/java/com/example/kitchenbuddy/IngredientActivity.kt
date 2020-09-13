@@ -210,7 +210,9 @@ class IngredientActivity:AppCompatActivity(), CallbackInterface {
     }
 
     fun findRecipeClick(){
-        if(ingredientListforRecipe.count()!=0 ||ingredientListforRecipe.size!=0) {
+        Log.d("IngredientActivity", "COUNT:${ingredientListforRecipe.count().toString()}")
+        Log.d("IngredientActivity", "SIZE:${ingredientListforRecipe.size.toString()}")
+        if(ingredientListforRecipe.count() in 1..4) {
             find_recipe_button_ingredient.setOnClickListener {
                 Log.d("IngredientActivity", "OCISCENA:${ingredientListforRecipe.toString()}")
                 Log.d("IngredientActivity", "BROJ:${ingredientListforRecipe.size.toString()}")
@@ -223,7 +225,11 @@ class IngredientActivity:AppCompatActivity(), CallbackInterface {
         else if(ingredientListforRecipe.count()==0)
             //find_recipe_button_ingredient.isClickable=false
             find_recipe_button_ingredient.setOnClickListener {
-                Toast.makeText(this, "No ingredients selected!", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@IngredientActivity, "No ingredients selected!", Toast.LENGTH_SHORT).show()
+            }
+        else if(ingredientListforRecipe.count()>4)
+            find_recipe_button_ingredient.setOnClickListener {
+                Toast.makeText(this@IngredientActivity, "Too many ingredients selected!", Toast.LENGTH_SHORT).show()
             }
 
     }
@@ -236,10 +242,10 @@ class IngredientActivity:AppCompatActivity(), CallbackInterface {
                 ingredient_textview_ingredient.text="Your ingredients:"
             }
         }
-        else
+        else if(ingredientListforRecipe.count()==0)
         //find_recipe_button_ingredient.isClickable=false
             button.setOnClickListener {
-                Toast.makeText(this, "List already empty", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@IngredientActivity, "List already empty", Toast.LENGTH_SHORT).show()
             }
 
     }
