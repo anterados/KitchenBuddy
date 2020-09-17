@@ -1,12 +1,13 @@
 package com.example.kitchenbuddy
 
 import android.content.Intent
-import android.graphics.Color
-import android.graphics.Color.red
 import android.os.Bundle
 import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
+import androidx.core.app.ActivityCompat
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -14,10 +15,7 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.google.gson.GsonBuilder
 import com.squareup.picasso.Picasso
-import kotlinx.android.synthetic.main.activity_ingredient.*
-import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_recipe.*
-import kotlinx.android.synthetic.main.recipe_row.*
 import okhttp3.*
 import java.io.IOException
 
@@ -34,25 +32,66 @@ class RecipeActivity:AppCompatActivity() {
         fetchRating()
         fetchJson(recipeId)
         //recipeTitle_textView.text=recipeId.toString()
-
+        findFav(recipeId)
         findStore_button.setOnClickListener {
             val intent = Intent(this, FindStoresActivity::class.java)
+            //intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
             startActivity(intent)
+            //ActivityCompat.finishAffinity(this)  or Intent.FLAG_ACTIVITY_CLEAR_TOP
         }
         button_rate.setOnClickListener {
             uploadRating()
-            //runOnUiThread(){
 
-            //}
+
 
         }
         button_favorite.setOnClickListener {
             val res=button_favorite.resources
+
             Log.d("RecipeActivity", "ID is: ${res.toString()}")
-           setRecipeFavorite(recipeId)
+            if(button_favorite.text.toString()=="0"){
+                setRecipeFavorite(recipeId)
+                button_favorite.setBackgroundResource(R.drawable.ic_favorite_red)
+                Toast.makeText(this, "Added to favorites!", Toast.LENGTH_SHORT).show()
+            }
+
+            else if(button_favorite.text.toString()=="1"){
+                removeRecipeFavorite(recipeId)
+                button_favorite.setBackgroundResource(R.drawable.ic_favorite)
+                Toast.makeText(this, "Removed from favorites!", Toast.LENGTH_SHORT).show()
 
         }
 
+        }
+
+        Log.d("RecipeActivity", "${button_favorite.text.toString()} je vrijednost texta!")
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+
+        menuInflater.inflate(R.menu.menu, menu)
+        if (menu != null) {
+            menu.removeItem(R.id.action_search)
+        }
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when(item.title){
+            "My favorites" -> {
+                val intent = Intent(this, FavoritesActivity::class.java)
+                startActivity(intent)
+
+            }
+            "Log out" -> {
+                FirebaseAuth.getInstance().signOut()
+                finish()
+                val intent = Intent(this, LoginActivity::class.java)
+                startActivity(intent)
+                Toast.makeText(this, "You signed out successfully!", Toast.LENGTH_SHORT).show()
+            }
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     fun fetchJson(recipeId:String){
@@ -70,11 +109,7 @@ class RecipeActivity:AppCompatActivity() {
                 val recipefull = gson.fromJson(body, RecipeFull::class.java)
                 Log.d("RecipeActivity", "ID is: ${recipefull.meals[0].strMeal}")
                 Log.d("RecipeActivity", "SASTOJAK is: ${recipefull.meals[0].strIngredient1}")
-                /*
-                runOnUiThread {
-                    recyclerView_home.adapter = RecipeFull(recipefull)
-                }
-                */
+
                 val listaSastojaka= mutableListOf<String>()
                 val listaKolicina= mutableListOf<String>()
 
@@ -152,8 +187,6 @@ class RecipeActivity:AppCompatActivity() {
         Log.d("RecipeActivity", "POSLANO ${ratingNum.toString()}")
         val rating=RecipesRating(recipeId,ratingNum)
 
-        //ref.child("rating").addListenerForSingleValueEvent(rating)
-        //ref.push().setValue(rating)
         ref.setValue(rating)
             .addOnSuccessListener {
                 Log.d("RecipeActivity", "PISANJE U BAZU")
@@ -179,20 +212,12 @@ class RecipeActivity:AppCompatActivity() {
                         )
                         Log.d("RecipeActivity", "String!!!!!!!!!!! ${mySubString.toString()}")
                         val number = mySubString.toFloat()
-                        //val key=dataSnapshot.
-                        //val rating = dataSnapshot.child("rating")
-                         //   .getValue(Float::class.java)//!! //child("rating"). Float::class.java
 
-                        //val rating2=dataSnapshot.value.toString()
                         Log.d("RecipeActivity", "String!!!!!!!!!!! ${number.toString()}")
-                        //Log.d("RecipeActivity", "URating!!!!!!!!!!! ${rating.toString()}")
-                        //Log.d("RecipeActivity", "KEY!!!!!!!!!!! ${mySubString.toString()}")
-                        //Log.d("RecipeActivity", "URating2!!!!!!!!!!! ${rating2.toString()}")
+
                         total = total + number!!
                         count = count + 1
 
-                        //Log.d("RecipeActivity", "UKUPNO!!!!!!!!!!! ${total.toString()}")
-                        //Log.d("RecipeActivity", "Koliko!!!!!!!!!!! ${count.toString()}")
                     }
                 }
                 //ratingBar.rating=total.toFloat()
@@ -208,13 +233,57 @@ class RecipeActivity:AppCompatActivity() {
     }
     fun setRecipeFavorite(recipe_id: String){
         val uid =FirebaseAuth.getInstance().uid ?:""
-        val ref = FirebaseDatabase.getInstance().getReference("/users/$uid/$recipe_id")
+        val ref1 = FirebaseDatabase.getInstance().getReference("/users/$uid/$recipe_id")
         val favorite=FavRecipe(recipeTitle_textView.text.toString(),recipe_id, imgString)
         Log.d("MainActivity", "KONTROLA!")
-        ref.setValue(favorite)
+
+
+        ref1.setValue(favorite)
             .addOnSuccessListener {
                 Log.d("MainActivity", "PISANJE U BAZU")
             }
+
+
+    }
+    fun removeRecipeFavorite(recipe_id: String){
+        val uid =FirebaseAuth.getInstance().uid ?:""
+        val ref1 = FirebaseDatabase.getInstance().getReference("/users/$uid/$recipe_id")
+        //val ref2 = FirebaseDatabase.getInstance().getReference("/users/$uid")
+        //val favorite=FavRecipe(recipeTitle_textView.text.toString(),recipe_id, imgString)
+        Log.d("MainActivity", "KONTROLA!")
+
+
+        ref1.removeValue()
+            .addOnSuccessListener {
+                Log.d("MainActivity", "BRISANJE U BAZU")
+            }
+
+
+    }
+    fun findFav(recipe_id: String){
+        val uid =FirebaseAuth.getInstance().uid ?:""
+        val ref1 = FirebaseDatabase.getInstance().getReference("/users/$uid/$recipe_id")
+        ref1.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                var post = dataSnapshot.getValue()
+
+
+                if (post==null){
+                    button_favorite.text="0"
+                }
+                if(post.toString().contains("title")){
+                    button_favorite.text="1"
+                    button_favorite.setBackgroundResource(R.drawable.ic_favorite_red)
+                }
+
+
+            }
+            override fun onCancelled(databaseError: DatabaseError) {
+                throw databaseError.toException() // don't ignore errors
+                Log.d("RecipeActivity", "loadPost:onCancelled", databaseError.toException())
+            }
+        })
+
     }
 }
 class FavRecipe(val title:String, val id:String, val image:String)

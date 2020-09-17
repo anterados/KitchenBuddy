@@ -107,7 +107,9 @@
             android:layout_marginTop="4dp"
             android:background="@drawable/ic_favorite"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            android:text=""
+            android:textSize="0dp"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

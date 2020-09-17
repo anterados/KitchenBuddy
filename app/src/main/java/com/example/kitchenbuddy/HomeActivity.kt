@@ -5,17 +5,22 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.firebase.auth.FirebaseAuth
 import com.google.gson.GsonBuilder
 import kotlinx.android.synthetic.main.activity_home.*
+import kotlinx.android.synthetic.main.activity_ingredient.*
 import kotlinx.android.synthetic.main.activity_recipe.*
 import okhttp3.*
 import java.io.IOException
+import java.util.*
+import kotlin.collections.ArrayList
 
 
 class HomeActivity : AppCompatActivity() {
@@ -31,38 +36,49 @@ class HomeActivity : AppCompatActivity() {
         //recyclerView_home.adapter=HomeAdapter()
         //val intent = intent
         emptyData = findViewById(R.id.empty_view) as TextView
-/*
-        if (Intent.ACTION_SEARCH == intent.action) {
-            intent.getStringExtra(SearchManager.QUERY)?.also { query ->
-                doMySearch(query)
-            }
-
- */
         //handleIntent(getIntent())
         fetchJson()
         recyclerView_home.visibility = View.VISIBLE
     }
-/*
+
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+
         menuInflater.inflate(R.menu.menu, menu)
-        menu.
+        if (menu != null) {
+            menu.removeItem(R.id.action_search)
+        }
         return super.onCreateOptionsMenu(menu)
     }
-    */
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when(item.title){
+            "My favorites" -> {
+                val intent = Intent(this, FavoritesActivity::class.java)
+                startActivity(intent)
+
+            }
+            "Log out" -> {
+                FirebaseAuth.getInstance().signOut()
+                finish()
+                val intent = Intent(this, LoginActivity::class.java)
+                startActivity(intent)
+                Toast.makeText(this, "You signed out successfully!", Toast.LENGTH_SHORT).show()
+            }
+        }
+        return super.onOptionsItemSelected(item)
+    }
 
     fun fetchJson(){
         println("Attempting to fetch JSON")
         var getList = intent.getSerializableExtra("key") as ArrayList<String>
-        Log.d("HomeActivity", "${getList.toString()} je primljeno!!!")
         //val url = "http://www.recipepuppy.com/api/"
         //val url = "https://www.themealdb.com/api/json/v2/9973533/filter.php?i="
         var stringIngredient=getList.joinToString(separator = ",").replace(" ", "_").toLowerCase()
-        Log.d("HomeActivity","${stringIngredient.toString()}" +"je string!!!!!!!!!!!!!!!!!!!")
+
         if(stringIngredient==""){
             stringIngredient="0"
         }
         val url = "https://www.themealdb.com/api/json/v2/9973533/filter.php?i="+"${stringIngredient.toString()}"
-        Log.d("HomeActivity","$url" +"je url!!!!!!!!!!!!!!!!!!!")
         val request = Request.Builder().url(url).build()
         val client = OkHttpClient()
 
@@ -146,5 +162,3 @@ class Recipe(val strMeal:String, val strMealThumb:String, val idMeal:String)
 
 
 
-//class HomeList(val results: List<Recipe>)
-//class Recipe(val title:String, val ingredients:String, val thumbnail:String)

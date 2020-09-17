@@ -26,8 +26,7 @@ class HomeAdapter(val homeList: HomeList):RecyclerView.Adapter<RecipeHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecipeHolder {
 
 
-        Log.d("HomeAdapter","${parent.toString()}" +"je RODIOC")
-        Log.d("HomeAdapter","${viewType.toString()}" +"je POGLED")
+
         val layoutInflater=LayoutInflater.from(parent?.context)
         val cellForRow = layoutInflater.inflate(R.layout.recipe_row, parent, false)
 
@@ -47,7 +46,7 @@ class HomeAdapter(val homeList: HomeList):RecyclerView.Adapter<RecipeHolder>() {
         Log.d("HomeAdapter","${outer.toString()}" +"je RATING")
 
         holder.view.setOnClickListener {
-            Log.d("HomeAdapter","${recipe.idMeal}" +"je ID!!!!!!!!!!(prvi)!!!!!!!!!")
+
             val context=holder.view.context
             val intent = Intent(context,RecipeActivity::class.java)
             intent.putExtra("id",recipe.idMeal)
@@ -56,7 +55,7 @@ class HomeAdapter(val homeList: HomeList):RecyclerView.Adapter<RecipeHolder>() {
             context.startActivity(intent)
         }
     }
-    fun fetchRating(id:String,holder: RecipeHolder,position: Int):Float{
+    fun fetchRating(id:String,holder: RecipeHolder,position: Int){
         val uid = FirebaseAuth.getInstance().uid ?:""
         val recipeId =  id
         var returnValue:Float=0F
@@ -79,14 +78,8 @@ class HomeAdapter(val homeList: HomeList):RecyclerView.Adapter<RecipeHolder>() {
 
                         //val rating2=dataSnapshot.value.toString()
                         Log.d("RecipeActivity", "String!!!!!!!!!!! ${number.toString()}")
-                        //Log.d("RecipeActivity", "URating!!!!!!!!!!! ${rating.toString()}")
-                        //Log.d("RecipeActivity", "KEY!!!!!!!!!!! ${mySubString.toString()}")
-                        //Log.d("RecipeActivity", "URating2!!!!!!!!!!! ${rating2.toString()}")
                         total = total + number!!
                         count = count + 1
-                        //returnValue=total
-                        //Log.d("RecipeActivity", "UKUPNO!!!!!!!!!!! ${total.toString()}")
-                        //Log.d("RecipeActivity", "Koliko!!!!!!!!!!! ${count.toString()}")
 
 
                     }
@@ -95,10 +88,8 @@ class HomeAdapter(val homeList: HomeList):RecyclerView.Adapter<RecipeHolder>() {
                 Log.d("HomeActivity", "TOTAL!!!!!!!!!!! ${total.toString()}")
                 returnValue=total/count
                 Log.d("HomeActivity", "Povratna!!!!!!!!!!! ${returnValue.toString()}")
-                //returnResult(returnValue)
-                //this@HomeAdapter.outer=returnValue
+
                 if(returnValue>0){
-                    //holder.view.textView_recipe_ingredients.text="Rating: ${returnValue.toString()}/5"
                     holder.view.ratingBar3.visibility=View.VISIBLE
                     holder.view.ratingBar3.rating=returnValue
                 }
@@ -112,15 +103,9 @@ class HomeAdapter(val homeList: HomeList):RecyclerView.Adapter<RecipeHolder>() {
                 Log.d("RecipeActivity", "loadPost:onCancelled", databaseError.toException())
             }
         })
-        //Log.d("HomeActivity", "TOTAL!!!!!!!!!!! ${total.toString()}")
         Log.d("HomeActivity", "POVRATNA!!!!!!!!!!! ${returnValue.toString()}")
-        //this.outer=returnValue
 
-        return returnResult(returnValue)
-    }
-    fun returnResult(ret :Float):Float{
-        outer=ret
-        return ret
+
     }
 
 

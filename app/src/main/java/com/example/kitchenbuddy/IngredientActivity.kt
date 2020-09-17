@@ -10,15 +10,21 @@ import android.os.Message
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import com.google.firebase.ktx.Firebase
 import com.google.gson.GsonBuilder
 import kotlinx.android.synthetic.main.activity_ingredient.*
 import kotlinx.android.synthetic.main.recipe_row.*
+import kotlinx.android.synthetic.main.recipe_row.view.*
 import okhttp3.*
 import java.io.IOException
 import java.util.*
@@ -47,30 +53,14 @@ class IngredientActivity:AppCompatActivity(), CallbackInterface {
 
         //recyclerView_home.setBackgroundColor(Color.BLUE)
         recyclerView_ingredient.layoutManager= LinearLayoutManager(this)
-        //recyclerView_home.adapter=HomeAdapter()
-        //val intent = intent
-/*
-
-        if (Intent.ACTION_SEARCH == intent.action) {
-            intent.getStringExtra(SearchManager.QUERY)?.also { query ->
-                doMySearch(query)
-            }
-
- */
-        //
 
 
 
+        fetchUsername()
         fetchJson()
-        //findRecipeClick()
+
         removeAll()
 
-        /*
-        runOnUiThread{
-            recyclerView_ingredient.adapter=IngredientAdapter(IngredientList(displayList))
-        }
-
-*/
     }
 
     fun fetchJson(){
@@ -200,11 +190,8 @@ class IngredientActivity:AppCompatActivity(), CallbackInterface {
         }
         Log.d("IngredientActivity", "${ingredientListforRecipe.toString()}")
         ingredient_textview_ingredient.text="Your ingredients: "+"${ingredientListforRecipe.joinToString(separator = ", ")}"
-       // ingredient_textview_ingredient.text="Your ingredients:"+"${(ingredientListforRecipe.joinToString(separator = ",")).replace(" ", "_").toLowerCase()}"
         Log.d("IngredientActivity", "${ingredientListforRecipe.count().toString()}")
-        //val intent=Intent(this, HomeActivity::class.java )
-        //intent.putExtra("key",ingredientListforRecipe)
-        //startActivity(intent)
+
         findRecipeClick()
 
     }
@@ -249,6 +236,26 @@ class IngredientActivity:AppCompatActivity(), CallbackInterface {
             }
 
     }
+    fun fetchUsername(){
+        val uid = FirebaseAuth.getInstance().uid ?:""
+        var returnValue:Float=0F
+        val ref = FirebaseDatabase.getInstance().getReference().child("users").child("$uid").child("username")
+        ref.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                var post = dataSnapshot.getValue()
+                if (post==null){
+                    post="to KitchenBuddy"
+                }
+                Toast.makeText(this@IngredientActivity, "Welcome ${post.toString()}!", Toast.LENGTH_SHORT).show()
+
+            }
+            override fun onCancelled(databaseError: DatabaseError) {
+                throw databaseError.toException() // don't ignore errors
+                Log.d("RecipeActivity", "loadPost:onCancelled", databaseError.toException())
+            }
+        })
+    }
+
 
     class IngredientList(var meals: ArrayList<Ingredient>)
     class Ingredient(val idIngredient:String, val strIngredient:String, val strDescription:String )

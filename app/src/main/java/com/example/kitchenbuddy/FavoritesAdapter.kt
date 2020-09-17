@@ -42,24 +42,23 @@ class FavoritesAdapter(val favList: MutableList<RecipeFav>):RecyclerView.Adapter
 
         val thumbnailImage=holder.view.imageView_recipe_thumbnail
         Picasso.get().load(recipe.image_fav).into(thumbnailImage)
-        //val rating=fetchRating(recipe.idMeal,holder,position)
+        val rating=fetchRating(recipe.recipe_id,holder,position)
         //ubaciti rating******
         Log.d("HomeAdapter","${outer.toString()}" +"je RATING")
 
-        /* za otvaranje recepta
+
         holder.view.setOnClickListener {
-            Log.d("HomeAdapter","${recipe.idMeal}" +"je ID!!!!!!!!!!(prvi)!!!!!!!!!")
+            Log.d("HomeAdapter","${recipe.recipe_id}" +"je ID!!!!!!!!!!(prvi)!!!!!!!!!")
             val context=holder.view.context
             val intent = Intent(context,RecipeActivity::class.java)
-            intent.putExtra("id",recipe.idMeal)
-            Log.d("HomeAdapter","${recipe.idMeal}" +"je ID!!!!!!!!!!!!!!!!!!!")
+            intent.putExtra("id",recipe.recipe_id)
+            Log.d("Favorites","${recipe.recipe_id}" +"je ID!!!!!!!!!!!!!!!!!!!")
 
             context.startActivity(intent)
         }
 
-         */
     }
-    fun fetchRating(id:String,holder: FavoriteHolder,position: Int):Float{
+    fun fetchRating(id:String,holder: FavoriteHolder,position: Int){
         val uid = FirebaseAuth.getInstance().uid ?:""
         val recipeId =  id
         var returnValue:Float=0F
@@ -68,29 +67,20 @@ class FavoritesAdapter(val favList: MutableList<RecipeFav>):RecyclerView.Adapter
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 var total:Float = 0F
                 var count= 0
-                Log.d("RecipeActivity", "DIJETE!!!!!!!!!!! ${dataSnapshot.toString()}")
+
                 for (child in dataSnapshot.children) {
-                    Log.d("RecipeActivity", "DIJETE2!!!!!!!!!!! ${child.value.toString()}")
+
                     var mySubString = child.value.toString().substring(
                         child.value.toString().indexOf("=") + 1,
                         child.value.toString().indexOf(",")
                     )
-                    Log.d("RecipeActivity", "String!!!!!!!!!!! ${mySubString.toString()}")
-                    val number = mySubString.toFloat()
-                    //val key=dataSnapshot.
-                    //val rating = dataSnapshot.child("rating").getValue(Float::class.java)//!! //child("rating"). Float::class.java
 
-                    //val rating2=dataSnapshot.value.toString()
-                    Log.d("RecipeActivity", "String!!!!!!!!!!! ${number.toString()}")
-                    //Log.d("RecipeActivity", "URating!!!!!!!!!!! ${rating.toString()}")
-                    //Log.d("RecipeActivity", "KEY!!!!!!!!!!! ${mySubString.toString()}")
-                    //Log.d("RecipeActivity", "URating2!!!!!!!!!!! ${rating2.toString()}")
+                    val number = mySubString.toFloat()
+
+
+
                     total = total + number!!
                     count = count + 1
-                    //returnValue=total
-                    //Log.d("RecipeActivity", "UKUPNO!!!!!!!!!!! ${total.toString()}")
-                    //Log.d("RecipeActivity", "Koliko!!!!!!!!!!! ${count.toString()}")
-
 
                 }
 
@@ -101,7 +91,6 @@ class FavoritesAdapter(val favList: MutableList<RecipeFav>):RecyclerView.Adapter
                 //returnResult(returnValue)
                 //this@HomeAdapter.outer=returnValue
                 if(returnValue>0){
-                    //holder.view.textView_recipe_ingredients.text="Rating: ${returnValue.toString()}/5"
                     holder.view.ratingBar3.visibility=View.VISIBLE
                     holder.view.ratingBar3.rating=returnValue
                 }
@@ -117,14 +106,11 @@ class FavoritesAdapter(val favList: MutableList<RecipeFav>):RecyclerView.Adapter
         })
         //Log.d("HomeActivity", "TOTAL!!!!!!!!!!! ${total.toString()}")
         Log.d("HomeActivity", "POVRATNA!!!!!!!!!!! ${returnValue.toString()}")
-        //this.outer=returnValue
 
-        return returnResult(returnValue)
+
     }
-    fun returnResult(ret :Float):Float{
-        outer=ret
-        return ret
-    }
+
+
 
 
 
